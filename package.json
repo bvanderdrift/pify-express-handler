@@ -1,6 +1,6 @@
 {
   "name": "pify-express-handler",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Turn an Express HTTP handler into a promise for cleaner testing.",
   "main": "build/index.js",
   "scripts": {
