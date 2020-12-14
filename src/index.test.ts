@@ -88,7 +88,7 @@ describe("promisifyHandler", () => {
         setTimeout(resolve, minuteInMs, resolvedIndicator)
       ),
     ]);
-    promise.then((val: any) => {
+    promise.then((val: unknown) => {
       expect(val).to.equal(resolvedIndicator);
     });
     clock.tick(minuteInMs); // Forwarding time a minute
