@@ -1,6 +1,6 @@
 # Pify Express Handler
 
-A tiny promisify package for easier testing of express handlers used in [Firebase Functions](https://firebase.google.com/docs/functions) & [Google Cloud Functions](https://cloud.google.com/functions).
+A 0-dependency promisify package for easier testing of express handlers used in [Firebase Functions](https://firebase.google.com/docs/functions) & [Google Cloud Functions](https://cloud.google.com/functions).
 
 🎉 **Bonus**: type definitions already provided!
 
