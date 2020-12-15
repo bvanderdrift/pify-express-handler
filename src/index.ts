@@ -16,6 +16,10 @@ const createPropertyNotSupportedError = (propertyName: string) =>
 
 type Body = string | Record<string, unknown>;
 
+interface Headers {
+  [key: string]: string;
+}
+
 type GoogleHandler = HttpFunction;
 // Source from https://github.com/firebase/firebase-functions/blob/master/src/providers/https.ts#L44
 // The package doesn't export the type
@@ -24,7 +28,7 @@ type FirebaseHandler = (
   resp: Response
 ) => void | Promise<void>;
 
-type ReturnValue = { status: number; body: Body };
+type ReturnValue = { status: number; body: Body; headers: Headers };
 
 type PromisifyHandlerOverload = {
   (handler: GoogleHandler): (req: Request) => Promise<ReturnValue>;
@@ -37,6 +41,7 @@ export const promisifyHandler: PromisifyHandlerOverload = (
   new Promise((resolve, reject) => {
     let status = 200;
     let body: Body = ``;
+    let headers: Headers = {};
 
     // We're building this through mutations
     // So that we don't have to bind everything later
@@ -53,6 +58,7 @@ export const promisifyHandler: PromisifyHandlerOverload = (
         resolve({
           status,
           body,
+          headers,
         });
       },
       send: function (bodyPartToAppend: Body) {
@@ -132,8 +138,21 @@ export const promisifyHandler: PromisifyHandlerOverload = (
       sendStatus: function () {
         throw createFunctionNotSupportedError("sendStatus");
       },
-      set: function () {
-        throw createFunctionNotSupportedError("set");
+      set: function (arg1: string | Headers, arg2?: string) {
+        if (typeof arg1 === "string" && typeof arg2 === "string") {
+          headers[arg1] = arg2;
+        } else if (typeof arg1 === "object" && arg2 === undefined) {
+          headers = {
+            ...headers,
+            ...arg1,
+          };
+        } else {
+          throw new Error(
+            `Call signature arg1: '${typeof arg1}', arg2: '${typeof arg2}' not supported.`
+          );
+        }
+
+        return this;
       },
       type: function () {
         throw createFunctionNotSupportedError("type");

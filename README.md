@@ -20,10 +20,11 @@ const someHandler = async (req, res) => {
 it("should create the resource if everything succeeds", async () => {
     const handler = promisifyHandler(someHandler);
 
-    const {status, body} = await handler({/* empty request will suffice for this test*/});
+    const {status, body, headers} = await handler({/* empty request will suffice for this test*/});
 
     expect(status).to.equal(201);
     expect(body).to.equal("It's been created!");
+    expect(headers['foo']).to.equal('bar');
 })
 ```
 
@@ -43,6 +44,7 @@ Currently, only functions that use nothing more than the following functions on 
 - `.write()`
 - `.status()`
 - `.end()`
+- `.set()`
 - `.send()`
 
 If your function uses any other of the `res` object's functions this package will throw an error.

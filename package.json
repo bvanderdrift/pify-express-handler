@@ -1,10 +1,11 @@
 {
   "name": "pify-express-handler",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Turn an Express HTTP handler into a promise for cleaner testing.",
   "main": "build/index.js",
   "scripts": {
     "build": "rimraf build && tsc src/index.ts --outDir build",
+    "build:dev": "nodemon -e ts --watch src --exec 'npm run build'",
     "build:test": "npm run build && tsc src/index.test.ts --outDir build",
     "test": "npm run build:test && mocha build/index.test.js",
     "test:dev": "nodemon -e ts --watch src --exec 'npm test'"
