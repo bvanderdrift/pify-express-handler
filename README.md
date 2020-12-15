@@ -48,3 +48,7 @@ Currently, only functions that use nothing more than the following functions on 
 If your function uses any other of the `res` object's functions this package will throw an error.
 
 I'm happy to add more support later, if this package picks up. Please let me know through submitting an issue! 😀
+
+### JSON response
+
+If you use `.send({foo: "bar"})`, this package's return value will be that same object by reference. It will **not** be a `JSON.stringify`'d version of the object.

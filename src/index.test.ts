@@ -184,4 +184,18 @@ describe("promisifyHandler", () => {
     expect(status).to.equal(expectedCode);
     expect(body).to.equal(expectedBody);
   });
+
+  it("should allow for accepting JSON", async () => {
+    const responseObject = {
+      foo: "bar",
+      bar: "foo",
+    };
+    const handler: ExpressHandler = (req, res) => {
+      res.send(responseObject);
+    };
+    const request = {} as Request;
+
+    const { body } = await promisifyHandler(handler)(request);
+    expect(body).to.equal(responseObject);
+  });
 });

@@ -14,6 +14,8 @@ const createFunctionNotSupportedError = (functionName: string) =>
 const createPropertyNotSupportedError = (propertyName: string) =>
   createNotSupportedError("property", propertyName);
 
+type Body = string | Record<string, unknown>;
+
 type GoogleHandler = HttpFunction;
 // Source from https://github.com/firebase/firebase-functions/blob/master/src/providers/https.ts#L44
 // The package doesn't export the type
@@ -22,7 +24,7 @@ type FirebaseHandler = (
   resp: Response
 ) => void | Promise<void>;
 
-type ReturnValue = { status: number; body: string };
+type ReturnValue = { status: number; body: Body };
 
 type PromisifyHandlerOverload = {
   (handler: GoogleHandler): (req: Request) => Promise<ReturnValue>;
@@ -34,7 +36,7 @@ export const promisifyHandler: PromisifyHandlerOverload = (
 ) => async (req: Request | FirebaseRequest): Promise<ReturnValue> =>
   new Promise((resolve, reject) => {
     let status = 200;
-    let body = ``;
+    let body: Body = ``;
 
     // We're building this through mutations
     // So that we don't have to bind everything later
@@ -53,8 +55,14 @@ export const promisifyHandler: PromisifyHandlerOverload = (
           body,
         });
       },
-      send: function (bodyPartToAppend: string) {
-        this.write(bodyPartToAppend);
+      send: function (bodyPartToAppend: Body) {
+        if (typeof bodyPartToAppend === "string") {
+          this.write(bodyPartToAppend);
+        } else if (typeof bodyPartToAppend === "object") {
+          // Send accepts JSON. It will throw away whatever has been done in write.
+          body = bodyPartToAppend;
+        }
+
         this.end();
         return this;
       },
