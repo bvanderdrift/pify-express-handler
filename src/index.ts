@@ -66,7 +66,7 @@ export const promisifyHandler: PromisifyHandlerOverload = (
           this.write(bodyPartToAppend);
         } else if (typeof bodyPartToAppend === "object") {
           // Send accepts JSON. It will throw away whatever has been done in write.
-          body = bodyPartToAppend;
+          body = JSON.stringify(bodyPartToAppend);
         }
 
         this.end();
@@ -114,8 +114,10 @@ export const promisifyHandler: PromisifyHandlerOverload = (
       get: function () {
         throw createFunctionNotSupportedError("get");
       },
-      json: function () {
-        throw createFunctionNotSupportedError("json");
+      json: function (object) {
+        body = JSON.stringify(object);
+        this.end();
+        return this;
       },
       jsonp: function () {
         throw createFunctionNotSupportedError("jsonp");

@@ -185,7 +185,7 @@ describe("promisifyHandler", () => {
     expect(body).to.equal(expectedBody);
   });
 
-  it("should allow for accepting JSON", async () => {
+  it("should allow for accepting JSON through .send", async () => {
     const responseObject = {
       foo: "bar",
       bar: "foo",
@@ -196,6 +196,20 @@ describe("promisifyHandler", () => {
     const request = {} as Request;
 
     const { body } = await promisifyHandler(handler)(request);
-    expect(body).to.equal(responseObject);
+    expect(body).to.equal(JSON.stringify(responseObject));
+  });
+
+  it("should allow for accepting JSON through .json", async () => {
+    const responseObject = {
+      foo: "bar",
+      bar: "foo",
+    };
+    const handler: ExpressHandler = (req, res) => {
+      res.json(responseObject);
+    };
+    const request = {} as Request;
+
+    const { body } = await promisifyHandler(handler)(request);
+    expect(body).to.equal(JSON.stringify(responseObject));
   });
 });

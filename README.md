@@ -2,8 +2,6 @@
 
 A 0-dependency promisify package for easier testing of express handlers used in [Firebase Functions](https://firebase.google.com/docs/functions) & [Google Cloud Functions](https://cloud.google.com/functions).
 
-🎉 **Bonus**: type definitions already provided!
-
 ⚠️ **Warning**: express middleware not supported.
 
 ## Usage:
@@ -39,18 +37,15 @@ Instead; you can use this package to make testing your function smooth as butter
 
 ## Limitations
 
-Currently, only functions that use nothing more than the following functions on the `res` object are supported:
+Currently, only the following functions are supported:
 
 - `.write()`
 - `.status()`
 - `.end()`
 - `.set()`
 - `.send()`
+- `.json()`
 
 If your function uses any other of the `res` object's functions this package will throw an error.
 
 I'm happy to add more support later, if this package picks up. Please let me know through submitting an issue! 😀
-
-### JSON response
-
-If you use `.send({foo: "bar"})`, this package's return value will be that same object by reference. It will **not** be a `JSON.stringify`'d version of the object.
