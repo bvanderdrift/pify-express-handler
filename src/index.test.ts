@@ -255,4 +255,45 @@ describe("promisifyHandler", () => {
     expect(headers["Location"]).to.equal("/");
     expect(body).to.equal("");
   });
+
+  it("should allow for using redirect with only url", async () => {
+    const redirectUrl = "https//some.url";
+    const handler: ExpressHandler = (req, res) => {
+      res.redirect(redirectUrl);
+    };
+    const request = {} as Request;
+
+    const { status, body, headers } = await promisifyHandler(handler)(request);
+    expect(status).to.equal(302);
+    expect(headers["Location"]).to.equal(redirectUrl);
+    expect(body).to.equal("");
+  });
+
+  it("should allow for using redirect with status & url", async () => {
+    const redirectUrl = "https//some.url";
+    const responseStatus = 301;
+    const handler: ExpressHandler = (req, res) => {
+      res.redirect(responseStatus, redirectUrl);
+    };
+    const request = {} as Request;
+
+    const { status, body, headers } = await promisifyHandler(handler)(request);
+    expect(status).to.equal(responseStatus);
+    expect(headers["Location"]).to.equal(redirectUrl);
+    expect(body).to.equal("");
+  });
+
+  it("should allow for using redirect with url & status", async () => {
+    const redirectUrl = "https//some.url";
+    const responseStatus = 301;
+    const handler: ExpressHandler = (req, res) => {
+      res.redirect(redirectUrl, responseStatus);
+    };
+    const request = {} as Request;
+
+    const { status, body, headers } = await promisifyHandler(handler)(request);
+    expect(status).to.equal(responseStatus);
+    expect(headers["Location"]).to.equal(redirectUrl);
+    expect(body).to.equal("");
+  });
 });

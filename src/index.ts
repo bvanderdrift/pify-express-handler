@@ -130,8 +130,28 @@ export const promisifyHandler: PromisifyHandlerOverload = (
 
         return this.set("Location", path);
       },
-      redirect: function () {
-        throw createFunctionNotSupportedError("redirect");
+      redirect: function (
+        statusOrUrl: number | string,
+        statusOrUrlOrUndefined?: number | string
+      ) {
+        const status =
+          typeof statusOrUrl === "number"
+            ? statusOrUrl
+            : typeof statusOrUrlOrUndefined === "number"
+            ? statusOrUrlOrUndefined
+            : 302;
+        const url =
+          typeof statusOrUrl === "string"
+            ? statusOrUrl
+            : typeof statusOrUrlOrUndefined === "string"
+            ? statusOrUrlOrUndefined
+            : undefined;
+
+        if (url === undefined) {
+          throw Error("Please provide a redirect URL");
+        }
+
+        return this.status(status).location(url).end();
       },
       render: function () {
         throw createFunctionNotSupportedError("render");
