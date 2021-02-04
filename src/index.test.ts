@@ -212,4 +212,47 @@ describe("promisifyHandler", () => {
     const { body } = await promisifyHandler(handler)(request);
     expect(body).to.equal(JSON.stringify(responseObject));
   });
+
+  it("should allow for using location", async () => {
+    const locationValue = "https//some.url";
+    const handler: ExpressHandler = (req, res) => {
+      res.location(locationValue).end();
+    };
+    const request = {} as Request;
+
+    const { body, headers } = await promisifyHandler(handler)(request);
+    expect(headers["Location"]).to.equal(locationValue);
+    expect(body).to.equal("");
+  });
+
+  it("should allow for using location back with referrer", async () => {
+    const referrerValue = "https://previous.url";
+    const handler: ExpressHandler = (req, res) => {
+      res.location("back").end();
+    };
+
+    const request = {
+      get: (key: string) => ({
+        "Referrer": referrerValue
+      } as Record<string, string | undefined>)[key]
+    } as Request;
+
+    const { body, headers } = await promisifyHandler(handler)(request);
+    expect(headers["Location"]).to.equal(referrerValue);
+    expect(body).to.equal("");
+  });
+
+  it("should allow for using location back without referrer", async () => {
+    const handler: ExpressHandler = (req, res) => {
+      res.location("back").end();
+    };
+    const request = {
+      get: (key: string) => ({
+      } as Record<string, string | undefined>)[key]
+    } as Request;
+
+    const { body, headers } = await promisifyHandler(handler)(request);
+    expect(headers["Location"]).to.equal("/");
+    expect(body).to.equal("");
+  });
 });

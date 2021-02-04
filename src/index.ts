@@ -125,8 +125,10 @@ export const promisifyHandler: PromisifyHandlerOverload = (
       links: function () {
         throw createFunctionNotSupportedError("links");
       },
-      location: function () {
-        throw createFunctionNotSupportedError("location");
+      location: function (value: string) {
+        const path = value === "back" ? req.get("Referrer") || "/" : value;
+
+        return this.set("Location", path);
       },
       redirect: function () {
         throw createFunctionNotSupportedError("redirect");
